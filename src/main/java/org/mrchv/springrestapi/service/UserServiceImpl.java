@@ -3,20 +3,16 @@ package org.mrchv.springrestapi.service;
 import lombok.RequiredArgsConstructor;
 import org.mrchv.springrestapi.dto.UserDto;
 import org.mrchv.springrestapi.model.User;
-import org.mrchv.springrestapi.repository.RoleRepository;
 import org.mrchv.springrestapi.repository.UserRepository;
 import org.mrchv.springrestapi.util.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Set;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.*;
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 @Service
@@ -50,25 +46,24 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         this.findUserByEmail(userDto.email())
-                .orElseThrow(() ->
-                        new RuntimeException("Пользователь с username=%s уже существует!".formatted(userDto.email()))
+                .ifPresent(userDb ->
+                        new RuntimeException("Пользователь с username=%s уже существует!".formatted(userDb.email()))
                 );
 
         User user = userMapper.mapToUser(userDto);
-
+        user.setPassword(encoder.encode(userDto.password()));
         if (userDto.roles().contains("ADMIN")) {
             user.setRoles(roleService.findAllRoles());
         }
-
-        user.setPassword(encoder.encode(userDto.password()));
-
-        User savedUser = userRepo.save(userMapper.mapToUser(userDto));
+        User savedUser = userRepo.save(user);
         return userMapper.mapToUserDto(savedUser);
     }
 
     @Override
-    public void updateUser(UserDto userDto) {
-        UserDto userFromDB = findUserById(userDto.id()).orElseThrow(NoSuchElementException::new);
+    public UserDto updateUser(UserDto userDto) {
+        UserDto userFromDB = this.findUserById(userDto.id())
+                .orElseThrow(NoSuchElementException::new);
+
         User user = userMapper.mapToUser(userDto);
         if (userFromDB.roles().contains("ADMIN")) {
             user.setRoles(roleService.findAllRoles());
@@ -79,7 +74,7 @@ public class UserServiceImpl implements UserService {
                 :   encoder.encode(userDto.password());
 
         user.setPassword(password);
-        userRepo.save(userMapper.mapToUser(userDto));
+        return userMapper.mapToUserDto(userRepo.save(user));
     }
 
     @Override

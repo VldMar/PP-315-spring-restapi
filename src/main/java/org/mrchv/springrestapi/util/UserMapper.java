@@ -1,14 +1,19 @@
 package org.mrchv.springrestapi.util;
 
+import lombok.RequiredArgsConstructor;
 import org.mrchv.springrestapi.dto.UserDto;
 import org.mrchv.springrestapi.model.Role;
 import org.mrchv.springrestapi.model.User;
+import org.mrchv.springrestapi.service.RoleService;
 import org.springframework.stereotype.Component;
 
 import static java.util.stream.Collectors.toSet;
 
 @Component
+@RequiredArgsConstructor
 public final class UserMapper {
+
+    private final RoleService roleService;
 
     public UserDto mapToUserDto(User user) {
         return new UserDto(
@@ -33,7 +38,7 @@ public final class UserMapper {
                 .email(userDto.email())
                 .password(userDto.password())
                 .roles(userDto.roles().stream()
-                        .map(roleName -> new Role(roleName))
+                        .map(roleName -> roleService.findRoleByName(roleName))
                         .collect(toSet()))
                 .build();
     }

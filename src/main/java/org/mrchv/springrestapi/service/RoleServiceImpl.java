@@ -26,4 +26,15 @@ public class RoleServiceImpl implements RoleService {
                 .map(Role::getName)
                 .collect(Collectors.toSet());
     }
+
+    @Override
+    public Role findRoleByName(String name) {
+        return roleRepo.findRoleByName(name).get();
+    }
+
+    @Override
+    public Role saveRole(String roleName) {
+        Role savedRole = roleRepo.saveAndFlush(new Role(roleName));
+        return savedRole;
+    }
 }
