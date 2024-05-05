@@ -3,13 +3,15 @@ package org.mrchv.springrestapi.service;
 import org.mrchv.springrestapi.dto.UserDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
      List<UserDto> findAllUsers();
-     UserDto findUserById(Long id);
-     UserDto findUserByUsername(String username);
+     Optional<UserDto> findUserById(Long id);
+     Optional<UserDto> findUserByEmail(String email);
+
+     UserDto createUser(UserDto userDto);
      void updateUser(UserDto user);
      void deleteUserById(Long id);
 
-     UserDto createUser(UserDto userDto);
 }

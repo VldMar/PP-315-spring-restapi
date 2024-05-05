@@ -1,20 +1,17 @@
 package org.mrchv.springrestapi.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 
-import java.util.HashSet;
 import java.util.Set;
 
-@Data
-@Builder
-public class UserDto {
-    private Long id;
-    private String firstName;
-    private String lastName;
-    private int age;
-    private String email;
-    private String password;
-    private Set<String> roles = new HashSet<>();
-}
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+public record UserDto(
+    Long id,
+    String firstName,
+    String lastName,
+    int age,
+    String email,
+    String password,
+    Set<String> roles
+) {}

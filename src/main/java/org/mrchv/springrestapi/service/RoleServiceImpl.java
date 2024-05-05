@@ -15,10 +15,15 @@ public class RoleServiceImpl implements RoleService {
     private final RoleRepository roleRepo;
 
     @Override
-    public Set<String> findAllRoles() {
+    public Set<Role> findAllRoles() {
+        return Set.copyOf(roleRepo.findAll());
+    }
+
+    @Override
+    public Set<String> findAllRolesNames() {
         return roleRepo.findAll()
                 .stream()
-                .map(Role::toString)
+                .map(Role::getName)
                 .collect(Collectors.toSet());
     }
 }
