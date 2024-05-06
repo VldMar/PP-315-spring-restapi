@@ -1,3 +1,9 @@
+$(document).ready(function() {
+    getCurrentUser();
+    fillUsersTable();
+})
+
+
 function showModal(data) {
     $("#modal-page").html(data);
     $("#modal-page .modal").modal("show");
@@ -25,6 +31,29 @@ function onDeleteClick(id) {
         url: "/delete/" + id,
         success: function (data) {
             showModal(data);
+        }
+    });
+}
+
+function getCurrentUser() {
+    $.ajax({
+       method: "get",
+       url: "/principal",
+       success: function (data) {
+           console.log(data)
+           $("#span-username").text(data.email);
+           $("#span-roles").text(data.roles.join(" "));
+       }
+    });
+}
+
+function fillUsersTable() {
+    $.ajax({
+        method: "get",
+        url: "/api/users",
+        success: function (users) {
+            console.log(users)
+
         }
     });
 }
