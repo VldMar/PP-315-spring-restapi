@@ -12,6 +12,6 @@ public record UserDto(
     String lastName,
     int age,
     String email,
-    String password,
+    String newPassword,
     Set<String> roles
 ) {}

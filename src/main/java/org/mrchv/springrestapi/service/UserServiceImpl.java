@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
                 );
 
         User user = userMapper.mapToUser(userDto);
-        user.setPassword(encoder.encode(userDto.password()));
+        user.setPassword(encoder.encode(userDto.newPassword()));
         if (userDto.roles().contains("ADMIN")) {
             user.setRoles(roleService.findAllRoles());
         }
@@ -61,17 +61,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto updateUser(UserDto userDto) {
-        UserDto userFromDB = this.findUserById(userDto.id())
+        User userFromDB = userRepo.findById(userDto.id())
                 .orElseThrow(NoSuchElementException::new);
 
         User user = userMapper.mapToUser(userDto);
-        if (userFromDB.roles().contains("ADMIN")) {
+        if (userDto.roles().contains("ADMIN")) {
             user.setRoles(roleService.findAllRoles());
         }
 
-        String password = userDto.password() == ""
-                ?   userFromDB.password()
-                :   encoder.encode(userDto.password());
+        String password = userDto.newPassword() == ""
+                ?   userFromDB.getPassword()
+                :   encoder.encode(userDto.newPassword());
 
         user.setPassword(password);
         return userMapper.mapToUserDto(userRepo.save(user));

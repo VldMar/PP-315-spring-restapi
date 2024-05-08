@@ -54,7 +54,7 @@
                         <div class="tab-item">
                             <h2 class="tab-item__header">All users</h2>
                             <div class="table-responsive tab-item__content">
-                                <table class="table table-striped">
+                                <table id="all-users-table" class="table table-striped">
                                     <thead>
                                     <tr>
                                         <th scope="col">ID</th>
@@ -63,24 +63,11 @@
                                         <th scope="col">Age</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">ROLE</th>
-                                        <th scope="col" >Edit</th>
+                                        <th scope="col">Edit</th>
                                         <th scope="col">Delete</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="userInfo : ${users}">
-                                        <td th:text="${userInfo.id}"></td>
-                                        <td th:text="${userInfo.name}"></td>
-                                        <td th:text="${userInfo.lastName}"></td>
-                                        <td th:text="${userInfo.age}">35</td>
-                                        <td th:text="${userInfo.email}">admin@mail.ru</td>
-                                        <td>
-                                            <th:block th:each="role: ${userInfo.getAuthorities()}" th:text="|${role} |">
-                                            </th:block>
-                                        </td>
-                                        <td><button id="editButton" type="button" class="btn btn-info" data-toggle="modal" data-target="#editModal" th:attr="onclick=|onUpdateClick('${userInfo.id}')|" >Edit</button></td>
-                                        <td><button id="deleteButton" type="button" class="btn btn-danger" data-toggle="modal" data-target="#deleteModal" th:attr="onclick=|onDeleteClick('${userInfo.id}')|">Delete</button></td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -135,7 +122,7 @@
     </div>
 
     <div id="modal-page">
-        <div class="modal fade" id="editModal" role="dialog" aria-hidden="true" th:fragment="edit-user-modal">
+        <div class="modal fade" id="editModal" role="dialog" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -171,12 +158,9 @@
                                 <input id="edit-password" type="password" class="form-control" >
                             </div>
                             <div class="mb-3">
-                                <label for="edit-role">ROLE</label>
-                                <select id="edit-role" name="roles" class="custom-select" size="2" multiple>
-                                    <option th:each="role : ${allRoles}"
-                                            th:value="${role.getName()}"
-                                            th:text="${role.toString()}"
-                                            th:selected="${#sets.contains(editableUser.roles, role)}"></option>
+                                <label for="edit-role-select">ROLE</label>
+                                <select id="edit-role-select" name="roles" class="custom-select" size="2" multiple>
+
                                 </select>
                             </div>
 
@@ -195,6 +179,6 @@
 
     <script th:src="@{/js/vendor/jquery.min.js}"></script>
     <script th:src="@{/js/vendor/bootstrap.min.js}"></script>
-    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/admin.js}"></script>
 </body>
 </html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <link rel="stylesheet" th:href="@{/css/vendor/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+    <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap shadow">
+        <div class="navbar-info">
+            <span id="span-username"></span>
+            <span>with roles:</span>
+            <span id="span-roles"></span>
+        </div>
+        <form method="post" th:action="@{/logout}">
+            <button type="submit" class="nav-link logout">Logout</button>
+        </form>
+    </nav>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!--  Left sidebar sticky-->
+            <nav class="col-md-2 d-none bg-light sidebar d-md-block main-panel">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column">
+                        <li id="admin-link" class="nav-item" style="display: none">
+                            <a th:href="@{/}" class="nav-link">Admin</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:href="@{/user}" class="nav-link active">User</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!--  Центральная панель страницы  -->
+            <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4 main-panel">
+                <h1>User information-page</h1>
+
+                <div class="tab-content" id="tabContent">
+                    <div class="tab-item">
+                        <h2 class="tab-item__header">About user</h2>
+                        <div class="table-responsive tab-item__content">
+                            <table id="user-info-table" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">First Name</th>
+                                        <th scope="col">Last Name</th>
+                                        <th scope="col">Age</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">ROLE</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script th:src="@{/js/vendor/jquery.min.js}"></script>
+    <script th:src="@{/js/user.js}"></script>
+</body>
+</html>

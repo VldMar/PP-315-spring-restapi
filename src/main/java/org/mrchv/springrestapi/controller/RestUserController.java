@@ -19,11 +19,9 @@ import java.util.List;
 public class RestUserController {
 
     private final UserService userService;
-    private final UserMapper userMapper;
 
     @GetMapping("principal")
     public ResponseEntity<UserDto> getPrincipal(@AuthenticationPrincipal UserDetails principal) {
-        UserDto principalDto = userService.findUserById(1L).get();//userMapper.mapToUserDto((User) principal);
-        return ResponseEntity.ok(principalDto);
+        return userService.findUserById(2L).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 }

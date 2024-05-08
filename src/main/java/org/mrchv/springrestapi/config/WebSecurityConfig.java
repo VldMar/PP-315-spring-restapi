@@ -28,8 +28,8 @@ public class WebSecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
-                    //auth.requestMatchers("/user").hasRole("USER");
-                    //auth.requestMatchers("/").hasRole("ADMIN");
+//                    auth.requestMatchers("/user").hasRole("USER");
+//                    auth.requestMatchers("/").hasRole("ADMIN");
                     auth.anyRequest().permitAll();
                 })
                 .formLogin(formLogin ->
