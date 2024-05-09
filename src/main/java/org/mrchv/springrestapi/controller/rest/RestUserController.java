@@ -1,4 +1,4 @@
-package org.mrchv.springrestapi.controller;
+package org.mrchv.springrestapi.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.mrchv.springrestapi.dto.UserDto;
@@ -18,10 +18,10 @@ import java.util.List;
 @RequestMapping("/")
 public class RestUserController {
 
-    private final UserService userService;
+    private final UserMapper userMapper;
 
     @GetMapping("principal")
     public ResponseEntity<UserDto> getPrincipal(@AuthenticationPrincipal UserDetails principal) {
-        return userService.findUserById(2L).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(userMapper.mapToUserDto((User) principal));
     }
 }

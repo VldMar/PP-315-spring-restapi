@@ -28,12 +28,12 @@ public class WebSecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
-//                    auth.requestMatchers("/user").hasRole("USER");
-//                    auth.requestMatchers("/").hasRole("ADMIN");
-                    auth.anyRequest().permitAll();
+                    auth.requestMatchers("/").hasRole("ADMIN");
+                    auth.requestMatchers("/user").hasRole("USER");
+                    auth.requestMatchers("/login", "/css/**", "/js/**").permitAll();
+                    auth.anyRequest().authenticated();
                 })
-                .formLogin(formLogin ->
-                        formLogin.disable())//.loginPage("/login").successHandler(getSuccessHandler()))
+                .formLogin(formLogin -> formLogin.loginPage("/login").successHandler(getSuccessHandler()))
                 .logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login"))
                 .build();
     }

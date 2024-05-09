@@ -2,7 +2,6 @@ $(document).ready(function() {
     showUserInfo();
 })
 
-
 function showUserInfo() {
     $.ajax({
         method: "get",

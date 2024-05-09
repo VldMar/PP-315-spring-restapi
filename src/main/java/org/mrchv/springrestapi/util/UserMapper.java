@@ -22,7 +22,7 @@ public final class UserMapper {
                 user.getLastName(),
                 user.getAge(),
                 user.getEmail(),
-                "",
+                user.getPassword(),
                 user.getRoles().stream()
                         .map(Role::toString)
                         .collect(toSet())

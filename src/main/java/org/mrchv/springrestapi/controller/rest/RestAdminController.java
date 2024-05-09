@@ -1,4 +1,4 @@
-package org.mrchv.springrestapi.controller;
+package org.mrchv.springrestapi.controller.rest;
 
 import lombok.RequiredArgsConstructor;
 import org.mrchv.springrestapi.dto.UserDto;
@@ -19,7 +19,6 @@ import java.util.Set;
 public class RestAdminController {
 
     private final UserService userService;
-    private final RoleService roleService;
 
     @GetMapping("")
     public ResponseEntity<List<UserDto>> getAllUsers() {
@@ -44,11 +43,6 @@ public class RestAdminController {
     @DeleteMapping("{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") Long userId) {
         userService.deleteUserById(userId);
-        return ResponseEntity.ok("User deleted successfully");
-    }
-
-    @GetMapping("roles")
-    public ResponseEntity<Set<String>> getAllRoles() {
-        return ResponseEntity.ok(roleService.findAllRolesNames());
+        return ResponseEntity.ok("User id=%s deleted successfully".formatted(userId));
     }
 }

@@ -69,12 +69,14 @@ public class UserServiceImpl implements UserService {
             user.setRoles(roleService.findAllRoles());
         }
 
-        String password = userDto.newPassword() == ""
+        String password = userDto.newPassword().equals("")
                 ?   userFromDB.getPassword()
                 :   encoder.encode(userDto.newPassword());
 
         user.setPassword(password);
-        return userMapper.mapToUserDto(userRepo.save(user));
+
+        User savedUser = userRepo.save(user);
+        return userMapper.mapToUserDto(savedUser);
     }
 
     @Override
