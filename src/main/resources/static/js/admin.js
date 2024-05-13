@@ -19,7 +19,7 @@ const fetchService = {
         headers: fetchService.head,
         body: JSON.stringify(user)
     }),
-    updateUser: async (user) => await fetch("/api/users", {
+    updateUser: async (userId, user) => await fetch(`/api/users/${userId}`, {
         method: "PUT",
         headers: fetchService.head,
         body: JSON.stringify(user),
@@ -36,7 +36,7 @@ async function setCurrentUser() {
         .then(res => res.json())
         .then(principal => {
             $("#span-username").text(principal.email);
-            $("#span-roles").text(principal.roles.join(" "));
+            $("#span-roles").text(principal.roles.map(u => u.name).join(" "));
         });
 }
 
@@ -56,11 +56,11 @@ function onUserCreate() {
     $("#new-user-form").on("click", "button[type=submit]", async function(e) {
         e.preventDefault();
         let user = {
-            first_name: $("#new-user__first-name").val(),
-            last_name: $("#new-user__last-name").val(),
+            name: $("#new-user__first-name").val(),
+            lastName: $("#new-user__last-name").val(),
             age: $("#new-user__age").val(),
             email: $("#new-user__email").val(),
-            new_password: $("#new-user__password").val(),
+            password: $("#new-user__password").val(),
             roles: $("#new-user__roles").val()
         };
 
@@ -82,18 +82,17 @@ function onModalSubmitClick() {
             case "edit":
                 let newUser = {
                     id: $("#modal-form #id").val(),
-                    first_name: $("#modal-form #first-name").val(),
-                    last_name: $("#modal-form #last-name").val(),
+                    name: $("#modal-form #first-name").val(),
+                    lastName: $("#modal-form #last-name").val(),
                     age: $("#modal-form #age").val(),
                     email: $("#modal-form #email").val(),
-                    new_password: $("#modal-form #password").val(),
+                    password: $("#modal-form #password").val(),
                     roles: $("#modal-form #roles").val()
                 }
-                await fetchService.updateUser(newUser)
+                await fetchService.updateUser(newUser.id, newUser)
                     .then(res => res.json())
                     .then(resUser => {
                         showAlert("Данные о пользователе успешно изменены", "success")
-                        console.log(resUser)
                         updateUserRow(resUser);
                         $("#modal").modal("hide");
                     });
@@ -133,8 +132,8 @@ async function fillUsersTable() {
 function fillModalAndShow(user, action) {
     // заполняем модальное окно
     $("#modal-form #id").val(user.id);
-    $("#modal-form #first-name").val(user.first_name);
-    $("#modal-form #last-name").val(user.last_name);
+    $("#modal-form #first-name").val(user.name);
+    $("#modal-form #last-name").val(user.lastName);
     $("#modal-form #age").val(user.age);
     $("#modal-form #email").val(user.email);
 
@@ -161,7 +160,7 @@ function fillEditModal(user) {
     // настраиваем роли
     $(`#modal-form #roles option`).show();
     user.roles.forEach(role => {
-        $(`#modal-form #roles option:contains(${role})`).prop("selected","selected")
+        $(`#modal-form #roles option:contains(${role.name})`).prop("selected","selected")
     });
     // все инпуты доступны для изменений
     $("#modal input:not(:first)").prop("readonly", false);
@@ -170,7 +169,8 @@ function fillEditModal(user) {
     $("#modal button[type='submit']")
         .text("Edit")
         .attr( "class", "btn btn-primary")
-        .attr("data-action", "edit");
+        .attr("data-action", "edit")
+        .attr("data-userid", user.id);
 
 }
 
@@ -184,7 +184,7 @@ function fillDeleteModal(user) {
     // настраиваем роли
     $(`#modal-form #roles option`).hide();
     user.roles.forEach(role => {
-        $(`#modal-form #roles option:contains(${role})`).prop("selected","selected").show()
+        $(`#modal-form #roles option:contains(${role.name})`).prop("selected","selected").show()
     });
     // все инпуты доступны для чтения
     $("#modal input").prop("readonly", true);
@@ -193,20 +193,22 @@ function fillDeleteModal(user) {
     $("#modal button[type='submit']")
         .text("Delete")
         .attr("class", "btn btn-danger")
-        .attr("data-action", "delete");
+        .attr("data-action", "delete")
+        .attr("data-userid", user.id);
 }
 
 
 function addUserInTable(user) {
+    console.log(user);
     $("#all-users-table tbody").append(
         `
         <tr data-userid="${user.id}">
             <td>${user.id}</td>
-            <td>${user.first_name}</td>
-            <td>${user.last_name}</td>
+            <td>${user.name}</td>
+            <td>${user.lastName}</td>
             <td>${user.age}</td>
             <td>${user.email}</td>
-            <td>${user.roles.join(" ")}</td>
+            <td>${user.roles.map(u => u.name).join(" ")}</td>
             <td>
                 <button
                 type="button" 
@@ -232,11 +234,11 @@ function updateUserRow(user) {
     $("#all-users-table tbody").find(`tr[data-userid=${user.id}]`).html(
         `
        <td>${user.id}</td>
-            <td>${user.first_name}</td>
-            <td>${user.last_name}</td>
+            <td>${user.name}</td>
+            <td>${user.lastName}</td>
             <td>${user.age}</td>
             <td>${user.email}</td>
-            <td>${user.roles.join(" ")}</td>
+            <td>${user.roles.map(u => u.name).join(" ")}</td>
             <td>
                 <button
                 type="button" 

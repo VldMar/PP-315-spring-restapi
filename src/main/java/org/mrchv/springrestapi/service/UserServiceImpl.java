@@ -1,18 +1,16 @@
 package org.mrchv.springrestapi.service;
 
 import lombok.RequiredArgsConstructor;
-import org.mrchv.springrestapi.dto.UserDto;
+import org.mrchv.springrestapi.model.Role;
 import org.mrchv.springrestapi.model.User;
 import org.mrchv.springrestapi.repository.UserRepository;
-import org.mrchv.springrestapi.util.UserMapper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -21,66 +19,80 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepo;
     private final RoleService roleService;
     private final PasswordEncoder encoder;
-    private final UserMapper userMapper;
 
     @Override
-    public List<UserDto> findAllUsers() {
-        return userRepo.findAll()
-                .stream()
-                .map(userMapper::mapToUserDto)
-                .collect(toList());
+    public List<User> findAllUsers() {
+        return userRepo.findAll();
     }
 
     @Override
-    public Optional<UserDto> findUserById(Long id) {
-        return userRepo.findById(id)
-                .map(userMapper::mapToUserDto);
+    public Optional<User> findUserById(Long id) {
+        return userRepo.findById(id);
     }
 
     @Override
-    public Optional<UserDto> findUserByEmail(String email) {
-        return userRepo.findByEmail(email)
-                .map(userMapper::mapToUserDto);
+    public Optional<User> findUserByEmail(String email) {
+        return userRepo.findByEmail(email);
     }
 
     @Override
-    public UserDto createUser(UserDto userDto) {
-        this.findUserByEmail(userDto.email())
+    public User createUser(User user) {
+        this.findUserByEmail(user.getEmail())
                 .ifPresent(userDb ->
-                        new RuntimeException("Пользователь с username=%s уже существует!".formatted(userDb.email()))
+                        new RuntimeException("Пользователь с username=%s уже существует!".formatted(userDb.getEmail()))
                 );
 
-        User user = userMapper.mapToUser(userDto);
-        user.setPassword(encoder.encode(userDto.newPassword()));
-        if (userDto.roles().contains("ADMIN")) {
+
+        if (isUserAdmin(user)) {
             user.setRoles(roleService.findAllRoles());
+        } else {
+            user.setRoles(
+                    user.getRoles()
+                            .stream()
+                            .map(role ->
+                                    roleService.findRoleByName(role.getName()))
+                            .collect(Collectors.toSet())
+            );
         }
-        User savedUser = userRepo.save(user);
-        return userMapper.mapToUserDto(savedUser);
+        user.setPassword(encoder.encode(user.getPassword()));
+        return userRepo.save(user);
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto) {
-        User userFromDB = userRepo.findById(userDto.id())
+    public User updateUser(Long userId, User user) {
+        User userFromDB = userRepo.findById(userId)
                 .orElseThrow(NoSuchElementException::new);
 
-        User user = userMapper.mapToUser(userDto);
-        if (userDto.roles().contains("ADMIN")) {
+        if (isUserAdmin(user)) {
             user.setRoles(roleService.findAllRoles());
+        } else {
+            user.setRoles(
+                    user.getRoles()
+                            .stream()
+                            .map(role ->
+                                    roleService.findRoleByName(role.getName()))
+                            .collect(Collectors.toSet())
+            );
         }
 
-        String password = userDto.newPassword().equals("")
+        String password = user.getPassword().equals("")
                 ?   userFromDB.getPassword()
-                :   encoder.encode(userDto.newPassword());
+                :   encoder.encode(user.getPassword());
 
         user.setPassword(password);
-
-        User savedUser = userRepo.save(user);
-        return userMapper.mapToUserDto(savedUser);
+        return userRepo.save(user);
     }
 
     @Override
     public void deleteUserById(Long id) {
         userRepo.deleteById(id);
+    }
+
+    private boolean isUserAdmin(User user) {
+        return user.getRoles()
+                .stream()
+                .map(Role::getName)
+                .filter(roleName -> roleName.equals("ADMIN"))
+                .count() > 0;
     }
 }

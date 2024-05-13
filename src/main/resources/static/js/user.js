@@ -8,8 +8,8 @@ function showUserInfo() {
         url: "/principal",
         success: function (principal) {
             $("#span-username").text(principal.email);
-            $("#span-roles").text(principal.roles.join(" "));
-            if (principal.roles.includes("ADMIN")) {
+            $("#span-roles").text(principal.roles.map(u => u.name).join(" "));
+            if (principal.roles.map(u => u.name).includes("ADMIN")) {
                 $("#admin-link").show();
             }
             fillUserInfoTable(principal);
@@ -22,11 +22,11 @@ function fillUserInfoTable(userInfo) {
         `
         <tr>
             <td>${userInfo.id}</td>
-            <td>${userInfo.first_name}</td>
-            <td>${userInfo.last_name}</td>
+            <td>${userInfo.name}</td>
+            <td>${userInfo.lastName}</td>
             <td>${userInfo.age}</td>
             <td>${userInfo.email}</td>
-            <td>${userInfo.roles.join(" ")}</td>
+            <td>${userInfo.roles.map(u => u.name).join(" ")}</td>
         </tr>
         `
     )

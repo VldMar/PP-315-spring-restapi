@@ -1,5 +1,6 @@
 package org.mrchv.springrestapi.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class Role implements GrantedAuthority {
     @Column(name="role_name", unique = true)
     private String name;
 
+    @JsonIgnore
     private final String PREFIX = "ROLE_";
 
     public Role(String name) {
@@ -31,6 +33,7 @@ public class Role implements GrantedAuthority {
         return name;
     }
 
+    @JsonIgnore
     @Override
     public String getAuthority() {
         return PREFIX + name;

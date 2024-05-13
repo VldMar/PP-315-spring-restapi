@@ -28,9 +28,9 @@ public class WebSecurityConfig {
         return http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> {
-                    auth.requestMatchers("/").hasRole("ADMIN");
-                    auth.requestMatchers("/user").hasRole("USER");
                     auth.requestMatchers("/login", "/css/**", "/js/**").permitAll();
+                    auth.requestMatchers("/user", "/principal", "/api/roles").hasRole("USER");
+                    auth.requestMatchers("/**").hasRole("ADMIN");
                     auth.anyRequest().authenticated();
                 })
                 .formLogin(formLogin -> formLogin.loginPage("/login").successHandler(getSuccessHandler()))
