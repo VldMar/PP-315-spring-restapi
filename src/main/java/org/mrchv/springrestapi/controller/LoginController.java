@@ -6,10 +6,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @Controller
-@RequestMapping("/login")
 public class LoginController {
 
-    @GetMapping()
+    @GetMapping("/login")
     public String showLoginPage() {
         return "login";
     }

@@ -12,23 +12,23 @@ const fetchService = {
         'Content-Type': 'application/json'
     },
     getPrincipal: async () => await fetch("/principal"),
-    getAllUsers: async () => await fetch("/api/users"),
-    getUserById: async (id) => await fetch(`/api/users/${id}`),
-    createUser: async (user) => await fetch("/api/users", {
+    getAllUsers: async () => await fetch("/admin/users"),
+    getUserById: async (id) => await fetch(`/admin/users/${id}`),
+    createUser: async (user) => await fetch("/admin/users", {
         method: 'POST',
         headers: fetchService.head,
         body: JSON.stringify(user)
     }),
-    updateUser: async (userId, user) => await fetch(`/api/users/${userId}`, {
+    updateUser: async (userId, user) => await fetch(`/admin/users/${userId}`, {
         method: "PUT",
         headers: fetchService.head,
         body: JSON.stringify(user),
     }),
-    deleteUser: async (id) => await fetch(`/api/users/${id}`, {
+    deleteUser: async (id) => await fetch(`/admin/users/${id}`, {
         method: "DELETE",
         headers: fetchService.head
     }),
-    getAllRoles: async() => await fetch("/api/roles")
+    getAllRoles: async() => await fetch("/admin/roles")
 }
 
 async function setCurrentUser() {
